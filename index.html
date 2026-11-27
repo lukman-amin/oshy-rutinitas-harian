@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rutinitas Harian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f6f4;--surface:#ffffff;--ink:#14212b;--muted:#5d6b75;--line:#d9e3de;
+  --accent:#1f8a70;--accent-ink:#ffffff;--sun:#e8a33d;--danger:#b3412f;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#0f1a1f;--surface:#18262d;--ink:#e8f0ec;--muted:#93a4ac;--line:#27393f;--accent:#3fc19f;--accent-ink:#06231b;--sun:#f0b650;--danger:#e27b68;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0f1a1f;--surface:#18262d;--ink:#e8f0ec;--muted:#93a4ac;--line:#27393f;--accent:#3fc19f;--accent-ink:#06231b;--sun:#f0b650;--danger:#e27b68;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+main{max-width:560px;margin:0 auto;padding:20px 16px 48px}
+.date{color:var(--muted);font-size:.95rem;margin:0}
+h1{font-size:2rem;font-weight:800;margin:2px 0 16px;letter-spacing:-.02em}
+.progress{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:20px}
+.progress-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.progress-top strong{font-size:1.6rem;font-weight:800}
+.progress-top span{color:var(--muted);font-size:.9rem}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>div{height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .35s ease}
+.bar.done>div{background:var(--sun)}
+form{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+input{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:48px}
+input[type=text]{flex:1 1 180px}
+input[type=time]{flex:0 0 auto}
+button{font:inherit;cursor:pointer}
+.add{background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;padding:12px 18px;font-weight:600;min-height:48px;flex:1 0 100%}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+h2{font-size:1rem;font-weight:600;color:var(--muted);margin:22px 0 8px}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+li{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px 6px 6px 12px;min-height:56px}
+li.done .name{text-decoration:line-through;color:var(--muted)}
+.check{width:32px;height:32px;flex:0 0 32px;border-radius:10px;border:2px solid var(--accent);background:transparent;color:var(--accent-ink);display:grid;place-items:center;padding:0}
+li.done .check{background:var(--accent)}
+.check svg{width:18px;height:18px;opacity:0}
+li.done .check svg{opacity:1}
+.txt{flex:1;min-width:0;text-align:left;background:none;border:0;color:inherit;padding:8px 0}
+.name{display:block;font-weight:600;overflow-wrap:anywhere}
+.time{font-size:.85rem;color:var(--muted)}
+.del{background:none;border:0;color:var(--muted);width:44px;height:44px;border-radius:10px;font-size:1.3rem}
+.del:hover{color:var(--danger)}
+.empty{text-align:center;color:var(--muted);padding:28px 12px;border:1px dashed var(--line);border-radius:14px}
+.foot{margin-top:28px;text-align:center}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:8px}
+.bell{background:none;border:0;width:44px;height:44px;border-radius:10px;color:var(--muted);opacity:.5;display:grid;place-items:center;padding:0}
+.bell.on{color:var(--sun);opacity:1}
+.bell svg{width:20px;height:20px}
+.banner{position:fixed;inset:0;z-index:50;background:var(--sun);color:#14212b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:calc(24px + env(safe-area-inset-top,0px)) 24px calc(24px + env(safe-area-inset-bottom,0px));text-align:center;font-weight:800;font-size:clamp(1.8rem,8vw,2.8rem);line-height:1.2}
+.banner::before{content:"\23F0";font-size:4.5rem;line-height:1}
+.banner[hidden]{display:none}
+.banner button{font:inherit;font-size:1.6rem;font-weight:800;background:#14212b;color:#fff;border:0;border-radius:18px;padding:20px 28px;min-height:72px;width:100%;max-width:420px}
+.note{color:var(--muted);font-size:.85rem;text-align:center;margin:6px 0 0}
+.link:disabled{text-decoration:none;cursor:default}
+@media (prefers-reduced-motion:reduce){.bar>div{transition:none}}
+.head{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap;margin:2px 0 16px}
+.head h1{margin:0}
+.apptitle{font-size:2.4rem;font-weight:800;letter-spacing:.03em;line-height:1.1;color:#6a3fc4;margin:0 0 10px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .apptitle{color:#b894ff}}
+:root[data-theme="dark"] .apptitle{color:#b894ff}
+.diag{white-space:pre-wrap;text-align:left;font:inherit;font-size:.8rem;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0 0;overflow-wrap:anywhere}
+.diag:empty{display:none}
+</style>
+</head>
+<body>
+<main>
+  <div class="banner" id="banner" role="alert" hidden><span id="bannerTxt"></span><button id="bannerClose" type="button">Matikan alarm</button></div>
+  <p class="apptitle">DAILY ROUTINE</p>
+  <p class="date" id="date"></p>
+  <div class="head">
+    <h1 id="greet">Rutinitas harian</h1>
+  </div>
+
+  <section class="progress" aria-live="polite">
+    <div class="progress-top"><strong id="pct">0%</strong><span id="count">0 dari 0 selesai</span></div>
+    <div class="bar" id="bar"><div></div></div>
+  </section>
+
+  <form id="form">
+    <input type="text" id="name" placeholder="Contoh: Olahraga pagi" maxlength="60" required aria-label="Nama rutinitas">
+    <input type="time" id="time" value="07:00" required aria-label="Jam">
+    <button class="add" type="submit">Tambah rutinitas</button>
+  </form>
+
+  <div id="list"></div>
+
+  <div class="foot"><button class="link" id="notifBtn" type="button">Aktifkan notifikasi alarm</button><br><button class="link" id="reset">Kosongkan centang hari ini</button>
+    <p class="note">Alarm berbunyi tepat pada jam kegiatan selama halaman ini masih terbuka. Ikon lonceng menyalakan atau mematikan alarm tiap kegiatan.</p></div>
+  <div id="diagBox" class="foot"><button class="link" id="testBtn" type="button">Tes alarm (10 detik)</button><pre class="diag" id="diag"></pre></div>
+</main>
+
+<script src="cordova.js"></script>
+<script>
+(function(){
+  var KEY_R='rutinitas.items', KEY_D='rutinitas.done';
+  var items=[], done={};
+  var memory={};
+
+  function load(k,fallback){
+    try{var v=localStorage.getItem(k);return v?JSON.parse(v):fallback}catch(e){return memory[k]!==undefined?memory[k]:fallback}
+  }
+  function save(k,v){
+    memory[k]=v;
+    try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}
+    if(k===KEY_R)syncNative();
+  }
+  function todayKey(){
+    var d=new Date();
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+
+  items=load(KEY_R,null);
+  if(!items){
+    items=[
+      {id:uid(),name:'Bangun dan minum air putih',time:'05:30'},
+      {id:uid(),name:'Olahraga ringan',time:'06:00'},
+      {id:uid(),name:'Belajar atau mengerjakan tugas',time:'09:00'},
+      {id:uid(),name:'Makan siang',time:'12:30'},
+      {id:uid(),name:'Baca buku 20 menit',time:'20:00'},
+      {id:uid(),name:'Tidur sebelum jam 10',time:'22:00'}
+    ];
+    save(KEY_R,items);
+  }
+  done=load(KEY_D,{});
+  var today=todayKey();
+  if(!done[today])done[today]={};
+  // simpan hanya 14 hari terakhir
+  Object.keys(done).sort().slice(0,-14).forEach(function(k){delete done[k]});
+
+  var hari=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  var bulan=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  var now=new Date(), h=now.getHours();
+  document.getElementById('date').textContent=hari[now.getDay()]+', '+now.getDate()+' '+bulan[now.getMonth()]+' '+now.getFullYear();
+  document.getElementById('greet').textContent=h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam';
+
+  function period(t){
+    var hr=parseInt(t.split(':')[0],10);
+    return hr<11?'Pagi':hr<15?'Siang':hr<18?'Sore':'Malam';
+  }
+  var order=['Pagi','Siang','Sore','Malam'];
+  var checkSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+  function esc(s){return s.replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+  function render(){
+    var list=document.getElementById('list');
+    if(!items.length){
+      list.innerHTML='<div class="empty">Belum ada rutinitas. Tulis satu di kolom atas, lalu tekan Tambah rutinitas.</div>';
+    }else{
+      var sorted=items.slice().sort(function(a,b){return a.time.localeCompare(b.time)});
+      var html='';
+      order.forEach(function(p){
+        var group=sorted.filter(function(i){return period(i.time)===p});
+        if(!group.length)return;
+        html+='<h2>'+p+'</h2><ul>';
+        group.forEach(function(i){
+          var d=!!done[today][i.id];
+          html+='<li class="'+(d?'done':'')+'">'
+            +'<button class="check" data-toggle="'+i.id+'" aria-label="Tandai selesai: '+esc(i.name)+'" aria-pressed="'+d+'">'+checkSvg+'</button>'
+            +'<button class="txt" data-toggle="'+i.id+'"><span class="name">'+esc(i.name)+'</span><span class="time">'+i.time+'</span></button>'
+            +'<button class="bell'+(i.alarm!==false?' on':'')+'" data-bell="'+i.id+'" aria-pressed="'+(i.alarm!==false)+'" aria-label="Alarm untuk '+esc(i.name)+'">'+bellSvg+'</button>'
+            +'<button class="del" data-del="'+i.id+'" aria-label="Hapus: '+esc(i.name)+'">&times;</button></li>';
+        });
+        html+='</ul>';
+      });
+      list.innerHTML=html;
+    }
+    var total=items.length, n=items.filter(function(i){return done[today][i.id]}).length;
+    var pct=total?Math.round(n/total*100):0;
+    document.getElementById('pct').textContent=pct+'%';
+    document.getElementById('count').textContent=n+' dari '+total+' selesai'+(total&&n===total?' – hebat!':'');
+    var bar=document.getElementById('bar');
+    bar.firstElementChild.style.width=pct+'%';
+    bar.classList.toggle('done',total>0&&n===total);
+  }
+
+  document.getElementById('list').addEventListener('click',function(e){
+    var b=e.target.closest('[data-bell]');
+    if(b){var it=items.filter(function(x){return x.id===b.getAttribute('data-bell')})[0];if(it){it.alarm=(it.alarm===false);save(KEY_R,items);if(it.alarm)askPerm();render()}return}
+    var t=e.target.closest('[data-toggle]'),d=e.target.closest('[data-del]');
+    if(t){var id=t.getAttribute('data-toggle');done[today][id]=!done[today][id];save(KEY_D,done);render()}
+    else if(d){
+      var id2=d.getAttribute('data-del');
+      items=items.filter(function(i){return i.id!==id2});
+      save(KEY_R,items);render();
+    }
+  });
+
+  document.getElementById('form').addEventListener('submit',function(e){
+    e.preventDefault();
+    var nm=document.getElementById('name'), tm=document.getElementById('time');
+    var v=nm.value.trim();
+    if(!v)return;
+    items.push({id:uid(),name:v,time:tm.value||'07:00'});
+    save(KEY_R,items);
+    nm.value='';nm.focus();render();
+  });
+
+  document.getElementById('reset').addEventListener('click',function(){
+    done[today]={};save(KEY_D,done);render();
+  });
+
+  var ac=null;
+  function unlock(){try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume()}catch(e){}}
+  document.addEventListener('click',unlock);
+  document.addEventListener('touchstart',unlock,{passive:true});
+  function beep(){
+    try{unlock();[0,0.25,0.5,0.75,1.0,1.25].forEach(function(o,k){var s=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+o;s.type='square';s.frequency.value=(k%2?1175:880);s.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(0.7,t);g.gain.exponentialRampToValueAtTime(0.01,t+0.22);s.start(t);s.stop(t+0.25)})}catch(e){}
+    try{if(navigator.vibrate)navigator.vibrate([500,200,500,200,500])}catch(e){}
+  }
+  function notifStatus(){
+    var nb=document.getElementById('notifBtn');if(!nb)return;
+    if(window.cordova){nb.hidden=true;return}
+    var p=('Notification' in window)?Notification.permission:'unsupported';
+    nb.textContent=p==='granted'?'Notifikasi aktif':p==='denied'?'Notifikasi diblokir di browser':p==='unsupported'?'Notifikasi tidak didukung':'Aktifkan notifikasi alarm';
+    nb.disabled=p!=='default';
+  }
+  function askPerm(){try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission().then(notifStatus)}catch(e){}}
+  document.getElementById('notifBtn').addEventListener('click',function(){unlock();askPerm()});
+  var banner=document.getElementById('banner'),bannerTxt=document.getElementById('bannerTxt');
+  var ringing=[],loop=null;
+  function stopAlarm(){ringing=[];nativeBanner=false;if(loop){clearInterval(loop);loop=null}banner.hidden=true;try{if(window.OshyAlarm)OshyAlarm.stop()}catch(e){}try{if(navigator.vibrate)navigator.vibrate(0)}catch(e){}}
+  document.getElementById('bannerClose').addEventListener('click',stopAlarm);
+  function ring(i){
+    ringing.push(i.name+' ('+i.time+')');
+    bannerTxt.textContent='Waktunya: '+ringing.join(', ');
+    banner.hidden=false;beep();
+    if(!loop)loop=setInterval(beep,2000);
+    try{if('Notification' in window&&Notification.permission==='granted')new Notification('Waktunya: '+i.name,{body:'Jam '+i.time})}catch(e){}
+  }
+  var fired=load('rutinitas.fired',{});
+  function tick(){
+    if(window.OshyAlarm)return;
+    var n=new Date(),k=todayKey();
+    if(fired.d!==k)fired={d:k,ids:{}};
+    var cur=n.getHours()*60+n.getMinutes();
+    items.forEach(function(i){
+      if(i.alarm===false||fired.ids[i.id])return;
+      var p=i.time.split(':'),m=parseInt(p[0],10)*60+parseInt(p[1],10);
+      if(cur>=m&&cur-m<=1){fired.ids[i.id]=1;save('rutinitas.fired',fired);ring(i)}
+    });
+  }
+  var bellSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg>';
+  var nativeReady=false,nativeBanner=false;
+  function dlog(m){var d=document.getElementById('diag');if(d)d.textContent+=(d.textContent?'\n':'')+m}
+  window.addEventListener('error',function(e){dlog('Error: '+e.message)});
+  function nid(s){var h=0;for(var c=0;c<s.length;c++){h=(h*31+s.charCodeAt(c))|0}return Math.abs(h)%2000000000+1}
+  function nat(){return window.OshyAlarm}
+  function syncNative(){
+    if(!nativeReady||!nat())return;
+    var list=items.filter(function(i){return i.alarm!==false}).map(function(i){return {id:nid(i.id),name:i.name,time:i.time}});
+    try{OshyAlarm.schedule(list,function(n){dlog('Alarm native terjadwal: '+n)},function(e){dlog('Gagal menjadwalkan: '+e)})}catch(e){dlog('Gagal sinkron: '+e)}
+  }
+  function poll(){
+    try{OshyAlarm.status(function(n){
+      if(n){if(banner.hidden){nativeBanner=true;ringing=[n];bannerTxt.textContent='Waktunya: '+n;banner.hidden=false}}
+      else if(nativeBanner&&!banner.hidden){nativeBanner=false;ringing=[];banner.hidden=true}
+    })}catch(e){}
+  }
+  document.addEventListener('deviceready',function(){
+    var nt=document.querySelector('.note');
+    if(nt)nt.textContent='Alarm dijadwalkan lewat sistem Android setiap hari dan berbunyi terus sampai dimatikan. Ikon lonceng menyalakan atau mematikan alarm tiap kegiatan.';
+    if(!nat()){dlog('Plugin alarm TIDAK terbaca.');return}
+    dlog('Plugin alarm terbaca.');
+    nativeReady=true;
+    try{OshyAlarm.notifPermission()}catch(e){}
+    syncNative();
+    setInterval(poll,1000);
+  },false);
+  dlog('Versi aplikasi: alarm-native-1');
+  var dready=false;
+  document.addEventListener('deviceready',function(){dready=true},false);
+  setTimeout(function(){if(!dready)dlog('deviceready tidak terdeteksi (mode browser). window.cordova='+(!!window.cordova))},4000);
+  document.getElementById('testBtn').addEventListener('click',function(){
+    if(!nat()){dlog('Mode browser: alarm tes berbunyi 10 detik lagi. Biarkan tab tetap terbuka.');setTimeout(function(){ring({name:'Tes alarm',time:'sekarang'})},10000);return}
+    try{OshyAlarm.test(10,function(){dlog('Tes dijadwalkan: alarm bunyi 10 detik lagi. Tutup aplikasi dan tunggu.')},function(e){dlog('Gagal tes: '+e)})}catch(e){dlog('Gagal tes: '+e)}
+  });
+  setInterval(tick,15000);
+  document.addEventListener('visibilitychange',tick);
+  notifStatus();
+  tick();
+  render();
+})();
+</script>
+</body>
+</html>
